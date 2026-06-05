@@ -1,165 +1,197 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель управления 3D‑принтером</title>
+    <title>Управление устройствами</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
+            margin: 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        section {
+        .section {
             margin-bottom: 30px;
             padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 6px;
+            border-radius: 8px;
         }
-        h2 {
-            margin-top: 0;
-            color: #333;
-        }
-        .control-buttons {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .temperature-info {
-            margin: 10px 0;
+        .checkbox-group label {
+            display: block;
+            margin-bottom: 10px;
         }
         .progress-container {
+            margin-bottom: 15px;
+        }
+        progress {
             width: 100%;
-            background: #e9e9e9;
-            border-radius: 5px;
-            overflow: hidden;
+            height: 20px;
         }
-        .progress-bar {
-            height: 25px;
-            width: 45%; /* Текущий прогресс печати */
-            background: linear-gradient(90deg, #4CAF50, #45a049);
-            border-radius: 5px;
-            text-align: center;
-            line-height: 25px;
-            color: white;
-            font-weight: bold;
+        .button-group button {
+            margin-right: 10px;
+            padding: 8px 16px;
+            cursor: pointer;
         }
-        .printer-info {
-            line-height: 1.6;
+        .video-container {
+            width: 100%;
+            max-width: 640px;
+            height: auto;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Секция 1: Управление и температуры -->
-        <section>
-            <h2>Управление и температуры</h2>
-            <div class="control-buttons">
-                <button id="lightBtn">Свет</button>
-                <button id="cameraBtn">Веб‑камера</button>
-            </div>
-            <div class="temperature-info">
-                <p>Температура сопла: <span id="nozzleTemp">200 °C</span></p>
-                <p>Температура стола: <span id="bedTemp">60 °C</span></p>
-            </div>
-        </section>
+    <!-- Секция 1: Чекбоксы -->
+    <section class="section">
+        <h2>Управление устройствами</h2>
+        <div class="checkbox-group">
+            <label>
+                <input type="checkbox" id="light">
+                Свет
+            </label>
+            <label>
+                <input type="checkbox" id="vent_in">
+                Внутренний
+            </label>
+            <label>
+                <input type="checkbox" id="vent_ext">
+                Внешний
+            </label>
+        </div>
+    </section>
 
-        <!-- Секция 2: Прогресс печати -->
-        <section>
-            <h2>Прогресс печати</h2>
-            <p>Текущий прогресс: <span id="progressText">45 %</span></p>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar">45 %</div>
-            </div>
-        </section>
+    <!-- Секция 2: Прогрессбар и кнопки -->
+    <section class="section">
+        <h2>Прогресс выполнения</h2>
+        <div class="progress-container">
+            <progress id="progressBar" value="0" max="100"></progress>
+            <span id="progressText">0%</span>
+        </div>
+        <div class="button-group">
+            <button id="stopBtn">Стоп</button>
+            <button id="pauseBtn">Пауза</button>
+            <button id="continueBtn">Продолжить</button>
+        </div>
+    </section>
 
-        <!-- Секция 3: Информация о принтере -->
-        <section>
-            <h2>Информация о принтере</h2>
-            <div class="printer-info">
-                <p><strong>Модель:</strong> Anycubic Kobra Max</p>
-                <p><strong>Прошивка:</strong> Marlin 2.0.9.1</p>
-                <p><strong>Статус:</strong> <span id="printerStatus">Активен</span></p>
-                <p><strong>Время печати:</strong> 3 ч 25 мин</p>
-                <p><strong>Оставшееся время:</strong> 4 ч 10 мин</p>
-            </div>
-        </section>
-    </div>
+    <!-- Секция 3: Камера и видео -->
+    <section class="section">
+        <h2>Видео с камеры</h2>
+        <div class="camera-control">
+            <label>
+                <input type="checkbox" id="cameraToggle">
+                Включить камеру
+            </label>
+        </div>
+        <div class="video-container">
+            <!-- Место для встраивания видео с камеры -->
+            <img id="cameraVideo">
+        </div>
+
+
+    </section>
+
 
     <script>
-        // Обработчики для кнопок
-        document.getElementById('lightBtn').addEventListener('click', function() {
-            alert('Управление светом активировано');
-            Send()
-        });
+        // Логика для прогрессбара
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const stopBtn = document.getElementById('stopBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const continueBtn = document.getElementById('continueBtn');
+        const light = document.getElementById('light');
+        const vent_in = document.getElementById('vent_in');
+        const vent_ext = document.getElementById('vent_ext');
 
-        document.getElementById('cameraBtn').addEventListener('click', function() {
-            alert('Веб‑камера запущена');
-        });
+        light.addEventListener("change",()=>{
+            Send({cmd:"light", args:light.checked+""})
+        })
 
-        // Пример обновления прогресса (можно заменить на реальные данные)
-        function updateProgress(percent) {
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
+        vent_in.addEventListener("change",()=>{
+            Send({cmd:"fan", args:vent_in.checked+" false"})
+        })
+        vent_ext.addEventListener("change",()=>{
+            Send({cmd:"fan", args:"false "+vent_ext.checked})
+        })
 
-            progressBar.style.width = percent + '%';
-            progressBar.textContent = percent + ' %';
-            progressText.textContent = percent + ' %';
+
+        let progressInterval;
+        let isPaused = false;
+
+        async function updateProgress() {
+            ret=await Send({cmd:"detail", args:""},(ret)=>{
+
+                console.log("SSS",ret.detail)
+                if(ret)
+                {
+                    
+                    progressBar.max= ret.detail.targetPrintLayer
+                    progressBar.value = ret.detail.printLayer
+                    progressText.textContent = ret.detail.printFileName;
+                    light.checked=(ret.detail.lightStatus=="open")?true:false;
+                    vent_ext.checked=(ret.detail.externalFanStatus=="open")?true:false;
+                    vent_in.checked=(ret.detail.internalFanStatus=="open")?true:false;
+                }
+
+            })
+            
+
         }
 
-        // Имитация изменения прогресса каждые 5 секунд (для демонстрации)
-        setInterval(function() {
-            const current = parseInt(document.getElementById('progressBar').style.width);
-            if (current < 100) {
-                updateProgress(current + 5);
+        // Запуск прогрессбара при загрузке страницы
+        progressInterval = setInterval(updateProgress, 5000);
+        updateProgress();
+
+        stopBtn.addEventListener('click', () => {
+            clearInterval(progressInterval);
+            progressBar.value = 0;
+            progressText.textContent = '0%';
+        });
+
+        pauseBtn.addEventListener('click', () => {
+            isPaused = true;
+        });
+
+        continueBtn.addEventListener('click', () => {
+            isPaused = false;
+        });
+
+        // Логика для камеры
+        const cameraToggle = document.getElementById('cameraToggle');
+        const cameraVideo = document.getElementById('cameraVideo');
+
+        cameraToggle.addEventListener('change', () => {
+            if (cameraToggle.checked) {
+                // В реальном проекте здесь будет запрос к камере
+                // Пример для демонстрации: показываем заглушку
+                cameraVideo.src = 'http://192.168.1.125:8080/?action=stream'; // Очистка источника
+            } else {
+                cameraVideo.src = '';
             }
-        }, 5000);
+        });
 
-        function Send(data){
-            const userData = {
-                name: "Иван Иванов",
-                email: "ivan@example.com",
-                age: 30
-            };
+        function Send(data, callback){
 
-            data=userData
-
-            fetch('/api', {
+            fetch('http://localhost:8080/api', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(userData)
+            body: JSON.stringify(data)
             })
-            .then(response => {
+            .then(async response => {
                 if (!response.ok) {
-                throw new Error('Ошибка сети или сервера');
+                    throw new Error('Ошибка сети или сервера');
                 }
-                return response.json();
+                if (callback)
+                    callback(await response.json());
             })
-            .then(data => {
-                console.log('Успешно:', data);
+            .then(result => {
+                console.log('Успех:', result);
             })
             .catch(error => {
                 console.error('Ошибка:', error);
