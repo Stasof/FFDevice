@@ -25,12 +25,25 @@ func API(data BaseRESTRequest) any {
 		if data.Args == "true false" {
 			setCirculateCtlCmd(true, false)
 		}
+		if data.Args == "false false" {
+			setCirculateCtlCmd(false, false)
+		}
 	case "detail":
 		res := getDetail()
 		return res
 
 	case "product":
 		res := getProduct()
+		return res
+	case "files":
+		res := getFiles()
+		return res
+	case "thumb":
+		res := getFileThumb(data.Args)
+		return res
+	case "command":
+		fmt.Println(data.Cmd, data.Args)
+		res := setCommand(data.Args)
 		return res
 	}
 

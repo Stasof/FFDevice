@@ -7,10 +7,11 @@ import (
 	"net/http"
 )
 
-var url = "http://192.168.1.125:8898/"
+// http://localhost:8765/?ip=192.168.1.111&serial=SNMOMF777777&check=b77d7bcd
+var url = "" // http://192.168.1.111:8898/
 var baseRequest = BaseRequest{
-	SerialNumber: "SNMOMF9100407",
-	CheckCode:    "b64d6bcd",
+	SerialNumber: "", //"SNMOMF9100407",
+	CheckCode:    "", //"b64d6bcd",
 }
 
 func setUrlSerialAndCheck(ip string, serial string, check string) {
@@ -54,6 +55,20 @@ func setLightControlCmd(status bool) CodeMessageResponse {
 	return res
 }
 
+func setCommand(command string) CodeMessageResponse {
+	cr := ControlRequest{
+		BaseRequest: baseRequest,
+		Payload: JobCtlCmd{
+			Cmd:  "jobCtl_cmd",
+			Args: JobArgs{JobID: "", Action: command},
+		},
+	}
+
+	var res CodeMessageResponse
+	SendPOST("control", cr, &res)
+	return res
+}
+
 func setCirculateCtlCmd(status_in bool, status_ext bool) CodeMessageResponse {
 	sts_in := "close"
 	sts_ext := "close"
@@ -72,6 +87,25 @@ func setCirculateCtlCmd(status_in bool, status_ext bool) CodeMessageResponse {
 	}
 	var res CodeMessageResponse
 	SendPOST("control", cr, &res)
+	return res
+}
+
+func getFiles() GcodeListResponse {
+	gcodeListRequest := GcodeListRequest{
+		BaseRequest: baseRequest,
+	}
+	var res GcodeListResponse
+	SendPOST("gcodeList", gcodeListRequest, &res)
+	return res
+}
+
+func getFileThumb(filename string) GcodeThumbResponse {
+	gcodeThumbRequest := GcodeThumbRequest{
+		BaseRequest: baseRequest,
+		FileName:    filename,
+	}
+	var res GcodeThumbResponse
+	SendPOST("gcodeThumb", gcodeThumbRequest, &res)
 	return res
 }
 

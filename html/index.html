@@ -1,202 +1,140 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Управление устройствами</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .section {
-            margin-bottom: 30px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        .checkbox-group label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        .progress-container {
-            margin-bottom: 15px;
-        }
-        progress {
-            width: 100%;
-            height: 20px;
-        }
-        .button-group button {
-            margin-right: 10px;
-            padding: 8px 16px;
-            cursor: pointer;
-        }
-        .video-container {
-            width: 100%;
-            max-width: 640px;
-            height: auto;
-        }
-        video {
-            width: 100%;
-            height: auto;
-            border-radius: 4px;
-        }
-    </style>
+    <!-- meta name="viewport" content="width=device-width, initial-scale=1.0" --> 
+    <link rel="stylesheet" href="index.css">
+    <title>FlashForge 5m pro</title>
 </head>
 <body>
-    <!-- Секция 1: Чекбоксы -->
-    <section class="section">
-        <h2>Управление устройствами</h2>
-        <div class="checkbox-group">
-            <label>
-                <input type="checkbox" id="light">
-                Свет
-            </label>
-            <label>
-                <input type="checkbox" id="vent_in">
-                Внутренний
-            </label>
-            <label>
-                <input type="checkbox" id="vent_ext">
-                Внешний
-            </label>
-        </div>
-    </section>
 
-    <!-- Секция 2: Прогрессбар и кнопки -->
-    <section class="section">
-        <h2>Прогресс выполнения</h2>
-        <div class="progress-container">
-            <progress id="progressBar" value="0" max="100"></progress>
-            <span id="progressText">0%</span>
-        </div>
-        <div class="button-group">
-            <button id="stopBtn">Стоп</button>
-            <button id="pauseBtn">Пауза</button>
-            <button id="continueBtn">Продолжить</button>
-        </div>
-    </section>
+    <dialog id="dlgCancel">
+        <h2>Внимание!</h2>
+        <p>Отменить печать?</p>
+        <button class="btn" id="closeBtn">да</button>
+        <button class="btn" onclick="dlgCancel.close()">нет</button>
+    </dialog>
 
-    <!-- Секция 3: Камера и видео -->
-    <section class="section">
-        <h2>Видео с камеры</h2>
-        <div class="camera-control">
-            <label>
-                <input type="checkbox" id="cameraToggle">
-                Включить камеру
-            </label>
-        </div>
-        <div class="video-container">
-            <!-- Место для встраивания видео с камеры -->
-            <img id="cameraVideo">
+    <dialog id="dlgPrint">
+        <h2>Печать</h2>
+        <p id="dlgFileName">название файла</p>
+        <img id="dlgPreview" width="230" height="181" src=""><br>
+        Калибровать стол перед печатью <input class="checkbox-vintage" type="checkbox"><br>
+        <button class="btn" id="closeBtn">Печать</button>
+        <button class="btn" onclick="dlgPrint.close()">Отмена</button>
+    </dialog>
+
+    <div class="container">
+        <!-- Левая колонка -->
+        <div class="column">
+            <div class="section">
+                <div class="section-header">
+                    Состояние
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td><img width="230" height="181" src="printer.png" id="modelthumb"></td>
+                            <td style="text-align: center;">
+                                <p id="status">нет соединения</p>
+                                <p><input class="btn" disabled id="pauseBtn" type="button" value="пауза"></p>
+                                <p><input class="btn" disabled id="resumeBtn" type="button" value="продолжить"></p>
+                                <p><input class="btn" disabled id="stopBtn" type="button" value="отменить"></p>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <progress id="progressBar" value="0" max="100"></progress>
+                                <span id="progressText">0%</span>
+                            </td>
+                        </tr>
+                    </table>                   
+                </div>
+            </div>
+
+            <div class="section collapsed" id="camera">
+                <div class="section-header">
+                    Камера
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <img id="cameraVideo" width="100%">
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                   Информация
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div id="rawdetail"></div>
+                </div>
+            </div>
         </div>
 
+        <!-- Правая колонка -->
+        <div class="column">
+            <div class="section">
+                <div class="section-header">
+                    Параметры
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <table style="width: 100%;">
+                        <tr><td>Свет</td><td><input class="checkbox-vintage" type="checkbox" id="light"></td></tr>
+                        <tr><td>Внутренний вентилятор</td><td><input class="checkbox-vintage" type="checkbox" id="vent_in"></td></tr>
+                        <tr><td>Внешний вентилятор</td><td><input class="checkbox-vintage" type="checkbox" id="vent_ext"></td></tr>
+                        <tr><td>Температура сопла</td><td id="nozzleTemp">23/260</td></tr>
+                        <tr><td>Температура стола</td><td id="platTemp">23/260</td></tr>
+                        <tr><td>Загрязнений в воздухе</td><td id="tvoc">23/260</td></tr>
+                        <tr><td>Всего филамента</td><td id="cumulativeFilament">23/260</td></tr>
+                        <tr><td>Всего времени</td><td id="cumulativePrintTime">23/260</td></tr>
+                        <tr><td>Оставшееся место надиске</td><td id="remainingDiskSpace">23/260</td></tr>
+                    </table>
+                </div>
+            </div>
 
-    </section>
+            <div class="section">
+                <div class="section-header">
+                    Модели в памяти
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div style="text-align: right;">
+                    <input class="btn" id="refreshBtn" type="button" value="Обновить">
+                    <!-- input class="btn" disabled id="uploadBtn" type="button" value="Загрузить..." -->
+                    </div>
+                    <div id="files"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <script>
-        // Логика для прогрессбара
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        const stopBtn = document.getElementById('stopBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const continueBtn = document.getElementById('continueBtn');
-        const light = document.getElementById('light');
-        const vent_in = document.getElementById('vent_in');
-        const vent_ext = document.getElementById('vent_ext');
-
-        light.addEventListener("change",()=>{
-            Send({cmd:"light", args:light.checked+""})
-        })
-
-        vent_in.addEventListener("change",()=>{
-            Send({cmd:"fan", args:vent_in.checked+" false"})
-        })
-        vent_ext.addEventListener("change",()=>{
-            Send({cmd:"fan", args:"false "+vent_ext.checked})
-        })
-
-
-        let progressInterval;
-        let isPaused = false;
-
-        async function updateProgress() {
-            ret=await Send({cmd:"detail", args:""},(ret)=>{
-
-                console.log("SSS",ret.detail)
-                if(ret)
-                {
-                    
-                    progressBar.max= ret.detail.targetPrintLayer
-                    progressBar.value = ret.detail.printLayer
-                    progressText.textContent = ret.detail.printFileName;
-                    light.checked=(ret.detail.lightStatus=="open")?true:false;
-                    vent_ext.checked=(ret.detail.externalFanStatus=="open")?true:false;
-                    vent_in.checked=(ret.detail.internalFanStatus=="open")?true:false;
-                }
-
-            })
+        document.addEventListener('DOMContentLoaded', function() {
+            const headers = document.querySelectorAll('.section-header');
             
-
-        }
-
-        // Запуск прогрессбара при загрузке страницы
-        progressInterval = setInterval(updateProgress, 5000);
-        updateProgress();
-
-        stopBtn.addEventListener('click', () => {
-            clearInterval(progressInterval);
-            progressBar.value = 0;
-            progressText.textContent = '0%';
-        });
-
-        pauseBtn.addEventListener('click', () => {
-            isPaused = true;
-        });
-
-        continueBtn.addEventListener('click', () => {
-            isPaused = false;
-        });
-
-        // Логика для камеры
-        const cameraToggle = document.getElementById('cameraToggle');
-        const cameraVideo = document.getElementById('cameraVideo');
-
-        cameraToggle.addEventListener('change', () => {
-            if (cameraToggle.checked) {
-                // В реальном проекте здесь будет запрос к камере
-                // Пример для демонстрации: показываем заглушку
-                cameraVideo.src = 'http://192.168.1.125:8080/?action=stream'; // Очистка источника
-            } else {
-                cameraVideo.src = '';
-            }
-        });
-
-        function Send(data, callback){
-
-            fetch('http://localhost:8080/api', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-            })
-            .then(async response => {
-                if (!response.ok) {
-                    throw new Error('Ошибка сети или сервера');
-                }
-                if (callback)
-                    callback(await response.json());
-            })
-            .then(result => {
-                console.log('Успех:', result);
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
+            headers.forEach(header => {
+                header.addEventListener('click', function() {
+                    const section = this.parentElement;
+                    section.classList.toggle('collapsed');
+                    if (section.id=="camera")
+                    { 
+                        if (!section.classList.contains('collapsed')) {
+                            cameraVideo.src = cameraStreamUrl; // Очистка источника
+                        } else {
+                            cameraVideo.src = '';
+                        }
+                    }
+                });
             });
-        }
+        });
     </script>
+    <script src="index.js"></script>
 </body>
 </html>

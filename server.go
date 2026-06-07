@@ -19,6 +19,7 @@ type BaseRESTResponse struct {
 // Обработчик для главной страницы — отдаёт HTML‑форму
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// Получаем отдельные значения
+	fmt.Println(r.URL.Path)
 	if r.URL.Path == "/" {
 		query := r.URL.Query()
 		ip := query.Get("ip")
@@ -30,18 +31,20 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.NotFound(w, r)
+	//if _, err := os.Stat("/path/to/whatever"); errors.Is(err, os.ErrNotExist) {
+	//	http.NotFound(w, r)
+	//}
+	http.ServeFile(w, r, "html"+r.URL.Path)
+
 }
 
 // Обработчик POST‑запросов с JSON
 func submitHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("POST")
 	// Проверяем, что метод запроса — POST
 	if r.Method != http.MethodPost {
 		http.Error(w, "Метод не поддерживается", http.StatusMethodNotAllowed)
 		return
 	}
-	fmt.Println("POST1")
 	// Проверяем заголовок Content-Type
 	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/json" {
@@ -49,7 +52,6 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("POST2")
 	// Парсим JSON из тела запроса
 	var userData BaseRESTRequest
 	err := json.NewDecoder(r.Body).Decode(&userData)
@@ -57,7 +59,6 @@ func submitHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Ошибка парсинга JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("POST13")
 	// Простая валидация данных
 	if userData.Cmd == "" {
 		http.Error(w, "Поля name и email обязательны", http.StatusBadRequest)
@@ -89,9 +90,9 @@ func run() {
 	http.HandleFunc("/", homeHandler)
 	http.HandleFunc("/api", submitHandler)
 
-	// Запускаем сервер на порту 8080
-	fmt.Println("Сервер запущен на http://localhost:8080")
-	err := http.ListenAndServe(":8080", nil)
+	port := ":8765"
+	fmt.Println("Сервер запущен на http://localhost" + port)
+	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		fmt.Printf("Ошибка запуска сервера: %v\n", err)
 	}

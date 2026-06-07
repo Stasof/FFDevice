@@ -1,0 +1,150 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.column {
+    flex: 1 1 450px;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
+.section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.section-header {
+    padding: 15px 20px;
+    background: #4a90e2;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-content {
+    padding: 20px;
+    max-height: 1000px;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+}
+
+/* Стиль для свёрнутой секции */
+.section.collapsed .section-content {
+    padding: 0;
+    max-height: 0;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.collapsed .toggle-icon {
+    transform: rotate(180deg);
+}
+
+#progressBar {
+    width: 100%;
+}
+
+.btn {
+    width: 100px;
+    height: 32px;
+    margin: 4px;
+}
+
+TD {
+    height: 24px;
+}
+
+.checkbox-vintage {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: #e0e0e0;
+    border: 2px outset #c0c0c0;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+dialog {
+    margin: auto auto;
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    width: min(90vw, 400px);
+    text-align: center;
+}
+
+.selcell {
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.selcell:hover {
+    border-bottom: 2px solid #4a90e2aa;
+}
+
+/* Портретный режим на мобильных устройствах */
+@media (orientation: portrait) {
+    .container {
+        flex-direction: column; /* Вертикальное расположение колонок */
+    }
+    .column {
+        width: 100%; /* Занимает всю ширину экрана */
+        min-width: auto; /* Отключаем минимальную ширину */
+        flex: none; /* Фиксируем размеры, отключаем растягивание */
+    }
+}
+
+/* Ландшафтный режим на мобильных — оставляем две колонки */
+@media (orientation: landscape) and (max-width: 768px) {
+    .container {
+        flex-direction: row; /* Горизонтальное расположение */
+        justify-content: space-between; /* Равномерное распределение */
+    }
+    .column {
+        flex: 1; /* Равное распределение пространства */
+        min-width: 280px; /* Минимальная ширина для читаемости */
+    }
+}
+
+/* Для очень маленьких экранов (дополнительно) */
+@media (max-width: 480px) {
+    .container {
+        gap: 10px; /* Уменьшаем отступы между колонками */
+        padding: 10px; /* Уменьшаем внутренние отступы контейнера */
+    }
+    .section-content {
+        padding: 10px; /* Уменьшаем отступы в содержимом секций */
+    }
+    .btn {
+        width: 90px; /* Немного уменьшаем кнопки */
+        height: 28px;
+    }
+}
