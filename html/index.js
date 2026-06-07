@@ -25,6 +25,7 @@
         const refreshBtn = document.getElementById('refreshBtn')
 
         const dlgPrint=document.getElementById('dlgPrint')
+        const printBtn=document.getElementById('printBtn')
         const dlgCancel=document.getElementById('dlgCancel')
         const closeBtn=document.getElementById('closeBtn')
 
@@ -60,6 +61,12 @@
         vent_ext.addEventListener("change",()=>{
             Send({cmd:"fan", args:"false "+vent_ext.checked})
             vent_in.checked=false
+        })
+
+        printBtn.addEventListener("click",()=>{
+            console.log("PRINT")
+            let filename=dlgFileName.innerHTML
+            Send({cmd:"print", args:filename})
         })
 
         async function updateProgress() {

@@ -45,6 +45,10 @@ func API(data BaseRESTRequest) any {
 		fmt.Println(data.Cmd, data.Args)
 		res := setCommand(data.Args)
 		return res
+		//case "print":
+		//fmt.Println(data.Cmd, data.Args)
+		//res := setCommand(data.Args)
+		//return res
 	}
 
 	fmt.Println(data.Cmd, data.Args)
