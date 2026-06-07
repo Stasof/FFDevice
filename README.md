@@ -7,6 +7,7 @@
 
 Компиляция
 Linux: go build -o ffdevice main.go ffprotocol.go ffclient.go server.go
+
 Windows: GOOS=windows go build -o ffdevice.exe main.go ffprotocol.go ffclient.go server.go
 
 
