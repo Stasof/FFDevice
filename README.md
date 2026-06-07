@@ -29,3 +29,12 @@ Linux: go build -o ffdevice main.go ffprotocol.go ffclient.go server.go
 Windows: GOOS=windows go build -o ffdevice.exe main.go ffprotocol.go ffclient.go server.go
 
 
+Подключение
+
+В браузере или в OrcaSlicer в поле URL-адрес хоста
+
+http://localhost:8765?ip=192.168.1.111&serial=SNMOMF7777777&check=b77d7bcd
+
+IP - адрес принтера
+SERIAL - серийный номе (слева вверху экрана)
+CHECK - специальный код
