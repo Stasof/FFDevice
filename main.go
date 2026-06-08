@@ -6,44 +6,41 @@ func main() {
 	run()
 }
 
-func Init(ip string, serial string, check string) {
-	setUrlSerialAndCheck(ip, serial, check)
-}
-
 func API(data BaseRESTRequest) any {
+
 	switch data.Cmd {
 	case "light":
 		if data.Args == "true" {
-			setLightControlCmd(true)
+			setLightControlCmd(data.Printer, true)
 		} else {
-			setLightControlCmd(false)
+			setLightControlCmd(data.Printer, false)
 		}
 	case "fan":
 		if data.Args == "false true" {
-			setCirculateCtlCmd(false, true)
+			setCirculateCtlCmd(data.Printer, false, true)
 		}
 		if data.Args == "true false" {
-			setCirculateCtlCmd(true, false)
+			setCirculateCtlCmd(data.Printer, true, false)
 		}
 		if data.Args == "false false" {
-			setCirculateCtlCmd(false, false)
+			setCirculateCtlCmd(data.Printer, false, false)
 		}
 	case "detail":
-		res := getDetail()
+		res := getDetail(data.Printer)
 		return res
 
 	case "product":
-		res := getProduct()
+		res := getProduct(data.Printer)
 		return res
 	case "files":
-		res := getFiles()
+		res := getFiles(data.Printer)
 		return res
 	case "thumb":
-		res := getFileThumb(data.Args)
+		res := getFileThumb(data.Printer, data.Args)
 		return res
 	case "command":
 		fmt.Println(data.Cmd, data.Args)
-		res := setCommand(data.Args)
+		res := setCommand(data.Printer, data.Args)
 		return res
 		//case "print":
 		//fmt.Println(data.Cmd, data.Args)

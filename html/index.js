@@ -168,6 +168,19 @@
         }
 
         function Send(data, callback){
+
+            // Получаем строку запроса (всё после ?)
+            const queryString = window.location.search;
+            // Парсим строку запроса
+            const urlParams = new URLSearchParams(queryString);
+            // Получаем значение конкретного параметра
+            const ip = urlParams.get('ip'); 
+            const serial = urlParams.get('serial');    
+            const check = urlParams.get('check');
+
+            data.printer={ip:ip,serial:serial,check:check}
+            console.log(data)
+
             fetch('http://localhost:8765/api', {
             method: 'POST',
             headers: {

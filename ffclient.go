@@ -8,56 +8,49 @@ import (
 )
 
 // http://localhost:8765/?ip=192.168.1.111&serial=SNMOMF777777&check=b77d7bcd
-var url = "" // http://192.168.1.111:8898/
-var baseRequest = BaseRequest{
-	SerialNumber: "", //"SNMOMF9100407",
-	CheckCode:    "", //"b64d6bcd",
+
+func GetBR(printer PrinterStruct) BaseRequest {
+	return BaseRequest{SerialNumber: printer.Serial, CheckCode: printer.Check}
 }
 
-func setUrlSerialAndCheck(ip string, serial string, check string) {
-	url = "http://" + ip + ":8898/"
-	baseRequest.SerialNumber = serial
-	baseRequest.CheckCode = check
-}
-
-func getDetail() DetailResponse {
+func getDetail(printer PrinterStruct) DetailResponse {
 	detailRequest := DetailRequest{
-		BaseRequest: baseRequest,
+		BaseRequest: GetBR(printer),
 	}
 	var res DetailResponse
-	SendPOST("detail", detailRequest, &res)
+	SendPOST(printer, "detail", detailRequest, &res)
 	return res
 }
 
-func getProduct() ProductResponse {
+func getProduct(printer PrinterStruct) ProductResponse {
 	productRequest := ProductRequest{
-		BaseRequest: baseRequest,
+		BaseRequest: GetBR(printer),
 	}
 	var res ProductResponse
-	SendPOST("product", productRequest, &res)
+	SendPOST(printer, "product", productRequest, &res)
 	return res
 }
 
-func setLightControlCmd(status bool) CodeMessageResponse {
+func setLightControlCmd(printer PrinterStruct, status bool) CodeMessageResponse {
 	sts := "close"
 	if status {
 		sts = "open"
 	}
 	cr := ControlRequest{
-		BaseRequest: baseRequest,
+		BaseRequest: GetBR(printer),
 		Payload: LightControlCmd{
 			Cmd:  "lightControl_cmd",
 			Args: LightArgs{Status: sts},
 		},
 	}
 	var res CodeMessageResponse
-	SendPOST("control", cr, &res)
+	SendPOST(printer, "control", cr, &res)
 	return res
 }
 
-func setCommand(command string) CodeMessageResponse {
+func setCommand(printer PrinterStruct, command string) CodeMessageResponse {
 	cr := ControlRequest{
-		BaseRequest: baseRequest,
+		BaseRequest: GetBR(printer),
 		Payload: JobCtlCmd{
 			Cmd:  "jobCtl_cmd",
 			Args: JobArgs{JobID: "", Action: command},
@@ -65,11 +58,11 @@ func setCommand(command string) CodeMessageResponse {
 	}
 
 	var res CodeMessageResponse
-	SendPOST("control", cr, &res)
+	SendPOST(printer, "control", cr, &res)
 	return res
 }
 
-func setCirculateCtlCmd(status_in bool, status_ext bool) CodeMessageResponse {
+func setCirculateCtlCmd(printer PrinterStruct, status_in bool, status_ext bool) CodeMessageResponse {
 	sts_in := "close"
 	sts_ext := "close"
 	if status_in {
@@ -79,37 +72,37 @@ func setCirculateCtlCmd(status_in bool, status_ext bool) CodeMessageResponse {
 		sts_ext = "open"
 	}
 	cr := ControlRequest{
-		BaseRequest: baseRequest,
+		BaseRequest: GetBR(printer),
 		Payload: CirculateCtlCmd{
 			Cmd:  "circulateCtl_cmd",
 			Args: CirculateArgs{Internal: sts_in, External: sts_ext},
 		},
 	}
 	var res CodeMessageResponse
-	SendPOST("control", cr, &res)
+	SendPOST(printer, "control", cr, &res)
 	return res
 }
 
-func getFiles() GcodeListResponse {
+func getFiles(printer PrinterStruct) GcodeListResponse {
 	gcodeListRequest := GcodeListRequest{
-		BaseRequest: baseRequest,
+		BaseRequest: GetBR(printer),
 	}
 	var res GcodeListResponse
-	SendPOST("gcodeList", gcodeListRequest, &res)
+	SendPOST(printer, "gcodeList", gcodeListRequest, &res)
 	return res
 }
 
-func getFileThumb(filename string) GcodeThumbResponse {
+func getFileThumb(printer PrinterStruct, filename string) GcodeThumbResponse {
 	gcodeThumbRequest := GcodeThumbRequest{
-		BaseRequest: baseRequest,
+		BaseRequest: GetBR(printer),
 		FileName:    filename,
 	}
 	var res GcodeThumbResponse
-	SendPOST("gcodeThumb", gcodeThumbRequest, &res)
+	SendPOST(printer, "gcodeThumb", gcodeThumbRequest, &res)
 	return res
 }
 
-func SendPOST(path string, data any, response any) bool {
+func SendPOST(printer PrinterStruct, path string, data any, response any) bool {
 
 	// Кодируем структуру в JSON
 	jsonData, err := json.Marshal(data)
@@ -118,7 +111,7 @@ func SendPOST(path string, data any, response any) bool {
 		return false
 	}
 
-	fmt.Println(url + path)
+	url := "http://" + printer.IP + ":8898/"
 	// Отправляем POST-запрос
 	resp, err := http.Post(
 		url+path,                  // URL для тестирования

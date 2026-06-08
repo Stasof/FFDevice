@@ -8,8 +8,15 @@ import (
 
 // Структура для приёма данных из JSON
 type BaseRESTRequest struct {
-	Cmd  string `json:"cmd"`
-	Args string `json:"args"`
+	Cmd     string `json:"cmd"`
+	Args    string `json:"args"`
+	Printer PrinterStruct
+}
+
+type PrinterStruct struct {
+	IP     string `json:"ip"`
+	Serial string `json:"serial"`
+	Check  string `json:"check"`
 }
 
 type BaseRESTResponse struct {
@@ -21,12 +28,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// Получаем отдельные значения
 	fmt.Println(r.URL.Path)
 	if r.URL.Path == "/" {
-		query := r.URL.Query()
+		/*query := r.URL.Query()
 		ip := query.Get("ip")
 		serial := query.Get("serial")
 		check := query.Get("check")
 		Init(ip, serial, check)
-		fmt.Println(serial, check)
+		fmt.Println(serial, check)*/
 		http.ServeFile(w, r, "html/index.html")
 		return
 	}
