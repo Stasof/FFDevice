@@ -62,6 +62,18 @@ func setCommand(printer PrinterStruct, command string) CodeMessageResponse {
 	return res
 }
 
+func setPrintCmd(printer PrinterStruct, fileName string, levelingBeforePrint bool) CodeMessageResponse {
+	cr := PrintGcodeRequest{
+		BaseRequest:         GetBR(printer),
+		FileName:            fileName,
+		LevelingBeforePrint: levelingBeforePrint,
+	}
+	fmt.Println("CR", cr)
+	var res CodeMessageResponse
+	SendPOST(printer, "printGcode", cr, &res)
+	return res
+}
+
 func setCirculateCtlCmd(printer PrinterStruct, status_in bool, status_ext bool) CodeMessageResponse {
 	sts_in := "close"
 	sts_ext := "close"

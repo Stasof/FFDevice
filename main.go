@@ -1,6 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"strings"
+)
+
+type PrintArgs struct {
+	FileName            string `json:"fileName"`
+	LevelingBeforePrint bool   `json:"levelingBeforePrint"`
+}
 
 func main() {
 	run()
@@ -42,10 +51,12 @@ func API(data BaseRESTRequest) any {
 		fmt.Println(data.Cmd, data.Args)
 		res := setCommand(data.Printer, data.Args)
 		return res
-		//case "print":
-		//fmt.Println(data.Cmd, data.Args)
-		//res := setCommand(data.Args)
-		//return res
+	case "print":
+		var printArgs PrintArgs
+		reader := strings.NewReader(data.Args)
+		json.NewDecoder(reader).Decode(&printArgs)
+		res := setPrintCmd(data.Printer, printArgs.FileName, printArgs.LevelingBeforePrint)
+		return res
 	}
 
 	fmt.Println(data.Cmd, data.Args)

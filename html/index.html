@@ -19,7 +19,7 @@
         <h2>Печать</h2>
         <p id="dlgFileName">название файла</p>
         <img id="dlgPreview" width="230" height="181" src=""><br>
-        Калибровать стол перед печатью <input class="checkbox-vintage" type="checkbox"><br>
+        Калибровать стол перед печатью <input class="checkbox-vintage" type="checkbox" id="levelingBeforePrint"><br>
         <button class="btn" id="printBtn">Печать</button>
         <button class="btn" onclick="dlgPrint.close()">Отмена</button>
     </dialog>
@@ -33,7 +33,7 @@
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="section-content">
-                    <table style="width: 100%;">
+                    <table>
                         <tr>
                             <td><img width="230" height="181" src="printer.png" id="modelthumb"></td>
                             <td style="text-align: center;">
@@ -54,36 +54,13 @@
                 </div>
             </div>
 
-            <div class="section collapsed" id="camera">
-                <div class="section-header">
-                    Камера
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="section-content">
-                    <img id="cameraVideo" width="100%">
-                </div>
-            </div>
-
-            <div class="section">
-                <div class="section-header">
-                   Информация
-                    <span class="toggle-icon">▼</span>
-                </div>
-                <div class="section-content">
-                    <div id="rawdetail"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Правая колонка -->
-        <div class="column">
             <div class="section">
                 <div class="section-header">
                     Параметры
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="section-content">
-                    <table style="width: 100%;">
+                    <table>
                         <tr><td>Свет</td><td><input class="checkbox-vintage" type="checkbox" id="light"></td></tr>
                         <tr><td>Внутренний вентилятор</td><td><input class="checkbox-vintage" type="checkbox" id="vent_in"></td></tr>
                         <tr><td>Внешний вентилятор</td><td><input class="checkbox-vintage" type="checkbox" id="vent_ext"></td></tr>
@@ -97,44 +74,51 @@
                 </div>
             </div>
 
-            <div class="section">
+            
+
+            
+        </div>
+
+        <!-- Правая колонка -->
+        <div class="column">
+            
+            <div class="section collapsed" id="camera">
                 <div class="section-header">
-                    Модели в памяти
+                    Камера
                     <span class="toggle-icon">▼</span>
                 </div>
                 <div class="section-content">
-                    <div style="text-align: right;">
-                    <input class="btn" id="refreshBtn" type="button" value="Обновить">
-                    <!-- input class="btn" disabled id="uploadBtn" type="button" value="Загрузить..." -->
+                    <img id="cameraVideo" width="100%">
+                </div>
+            </div>
+
+            <div class="section collapsed" id="filelist">
+                <div class="section-header">
+                    Модели в памяти 
+                    <input class="btn" id="refreshBtn" style="display: none;" type="button" value="Обновить">
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div style="text-align: right;">                   
                     </div>
                     <div id="files"></div>
                 </div>
             </div>
+
+            <div class="section collapsed" id="information" >
+                <div class="section-header">
+                   Информация 
+                   <span><input class="checkbox-vintage" style="display: none;" type="checkbox" id="allinfo"></span>
+                   <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-content">
+                    <div id="rawdetail"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const headers = document.querySelectorAll('.section-header');
-            
-            headers.forEach(header => {
-                header.addEventListener('click', function() {
-                    const section = this.parentElement;
-                    section.classList.toggle('collapsed');
-                    if (section.id=="camera")
-                    { 
-                        if (!section.classList.contains('collapsed')) {
-                            cameraVideo.src = cameraStreamUrl; // Очистка источника
-                        } else {
-                            cameraVideo.src = '';
-                        }
-                    }
-                });
-            });
-        });
-    </script>
     <script src="index.js"></script>
 </body>
 </html>

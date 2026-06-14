@@ -46,7 +46,12 @@ type ControlRequest struct {
     NewLocalJobCmd
 }*/
 
-// Примеры реализации отдельных команд (можно расширять по необходимости)
+// Структура для запроса на печать G-code файла
+type PrintGcodeRequest struct {
+	BaseRequest
+	FileName            string `json:"fileName"`            // Имя файла для печати
+	LevelingBeforePrint bool   `json:"levelingBeforePrint"` // Флаг выравнивания перед печатью
+}
 
 // LightControlCmd управление освещением
 type LightControlCmd struct {
