@@ -31,4 +31,4 @@ http://localhost:8765?ip=192.168.1.111&serial=SNMOMF7777777&check=b77d7bcd
 
 - IP - IP адрес принтера
 - SERIAL - серийный номе (слева вверху экрана, либо в информации об устройстве)
-- CHECK - Printer ID (https://www.flashforge.com/a/docs/orca-flashforge/orca-flashforge-quick-start-guide#connect-via-lan-only-mode)
+- CHECK - Printer ID (Настройки->сеть->сетевой режим->только локальные сети. Подробнее: https://www.flashforge.com/a/docs/orca-flashforge/orca-flashforge-quick-start-guide#connect-via-lan-only-mode)
