@@ -16,19 +16,26 @@
 - Печать файла из памяти принтера
 - Просмотр системной информации
 
-**Компиляция**
+**Компиляция из исходников**
 - Linux: go build -o ffdevice main.go ffprotocol.go ffclient.go server.go
 - Windows: GOOS=windows GOARCH=amd64 go build -o ffdevice.exe main.go ffprotocol.go ffclient.go server.go
 
-**Запуск**
+**Скачать скомпилированные файлы (Windows, Linux)**
 
-Выполните ffdevice (.exe для windows)
+https://github.com/Stasof/FFDevice/releases
+
+**Запуск**
+- В папке с программой запустите ffdevice (.exe для windows).
+- Программа запустится в консоли, либо без консоли (в зависимости от ОС), но ее можно увидеть в диспетчере задач.
+- Вся отсальная настройка производится в web-браузере или OrcaSlicer.
 
 **Подключение**
 
-В браузере или в OrcaSlicer в поле URL-адрес хоста
+В строке web-браузера или в OrcaSlicer в поле URL-адрес хоста введите:
+
 http://localhost:8765?ip=192.168.1.111&serial=SNMOMF7777777&check=b77d7bcd
 
+Замените следующие параметры на свои:
 - IP - IP адрес принтера
 - SERIAL - серийный номе (слева вверху экрана, либо в информации об устройстве)
 - CHECK - Printer ID (Настройки->сеть->сетевой режим->только локальные сети. Подробнее: https://www.flashforge.com/a/docs/orca-flashforge/orca-flashforge-quick-start-guide#connect-via-lan-only-mode)
